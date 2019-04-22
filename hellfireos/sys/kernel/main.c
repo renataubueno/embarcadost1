@@ -55,6 +55,7 @@ static void clear_tcb(void)
 		krnl_task->delay = 0;
 		krnl_task->rtjobs = 0;
 		krnl_task->bgjobs = 0;
+		krnl_task->aperiodic_jobs = 0;
 		krnl_task->deadline_misses = 0;
 		krnl_task->period = 0;
 		krnl_task->capacity = 0;
@@ -77,6 +78,7 @@ static void clear_pcb(void)
 	/* setup callbacks for the schedulers */
 	krnl_pcb.sched_rt = sched_rma;
 	krnl_pcb.sched_be = sched_priorityrr;
+	krnl_pcb.scheduler_aperiodic = sched_polling;
 	/* and clear the process control block */
 	krnl_pcb.coop_cswitch = 0;
 	krnl_pcb.preempt_cswitch = 0;
@@ -92,6 +94,8 @@ static void init_queues(void)
 	if (krnl_delay_queue == NULL) panic(PANIC_OOM);
 	krnl_rt_queue = hf_queue_create(MAX_TASKS);
 	if (krnl_rt_queue == NULL) panic(PANIC_OOM);
+	queue_aperiodic = hf_queue_create(MAX_TASKS);
+	if (queue_aperiodic == NULL) panic(PANIC_OOM);
 }
 
 /**

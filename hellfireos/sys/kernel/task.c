@@ -270,7 +270,10 @@ int32_t hf_spawn(void (*task)(), uint16_t period, uint16_t capacity, uint16_t de
 		if (period){
 			if (hf_queue_addtail(krnl_rt_queue, krnl_task)) panic(PANIC_CANT_PLACE_RT);
 		}else{
-			if (hf_queue_addtail(krnl_run_queue, krnl_task)) panic(PANIC_CANT_PLACE_RUN);
+			if (capacity > 0){
+				if (hf_queue_addtail(queue_aperiodic, krnl_task)) panic(PANIC_APER);
+			}else{
+				if (hf_queue_addtail(krnl_run_queue, krnl_task)) panic(PANIC_CANT_PLACE_RUN);
 		}
 	}else{
 		krnl_task->ptask = 0;
@@ -460,6 +463,15 @@ int32_t hf_kill(uint16_t id)
 		for (j = i; j > 0; j--)
 			if (hf_queue_swap(krnl_rt_queue, j, j-1)) panic(PANIC_CANT_SWAP);
 		krnl_task2 = hf_queue_remhead(krnl_rt_queue);
+	}else if (krnl_task->deadline == 0 && krnl_task->capacity > 0){
+		k = hf_queue_count(queue_aperiodic);
+		for (i = 0; i < k; i++)
+			if (hf_queue_get(queue_aperiodic, i) == krnl_task) break;
+		if (!k || i == k) panic(PANIC_APER);
+		for (j = i; j > 0; j--)
+			if (hf_queue_swap(queue_aperiodic, j, j-1)) panic(PANIC_CANT_SWAP);
+		krnl_task2 = hf_queue_remhead(queue_aperiodic);
+
 	}else{
 		k = hf_queue_count(krnl_run_queue);
 		for (i = 0; i < k; i++)

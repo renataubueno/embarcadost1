@@ -2,14 +2,14 @@
  * @file panic.c
  * @author Sergio Johann Filho
  * @date March 2016
- * 
+ *
  * @section LICENSE
  *
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file 'doc/license/gpl-2.0.txt' for more details.
- * 
+ *
  * @section DESCRIPTION
- * 
+ *
  * Kernel panic.
  */
 
@@ -24,7 +24,7 @@
 /**
  * @internal
  * @brief Causes the kernel to panic.
- * 
+ *
  * Interrupts are disabled, the panic cause is presented to the user and the
  * system is locked forever.
  */
@@ -33,7 +33,7 @@ void panic(int32_t cause)
 	_di();
 #if KERNEL_LOG == 1
 	dprintf("%d %d panic()", (uint32_t)_read_us(), krnl_current_task);
-#endif	
+#endif
 	kprintf("\nKERNEL: panic [task %d] - ", krnl_current_task);
 	switch(cause){
 	case PANIC_ABORTED:		kprintf("execution aborted"); break;
@@ -49,6 +49,7 @@ void panic(int32_t cause)
 	case PANIC_CANT_PLACE_RUN:	kprintf("can't place task on run queue"); break;
 	case PANIC_CANT_PLACE_DELAY:	kprintf("can't place task on delay queue"); break;
 	case PANIC_CANT_PLACE_RT:	kprintf("can't place task on real time queue"); break;
+	case PANIC_APER:	kprintf("can't place task on aperiodic queue"); break;
 	case PANIC_CANT_SWAP:		kprintf("can't swap tasks on queue"); break;
 	case PANIC_NUTS_SEM:		kprintf("insane semaphore"); break;
 	default:			kprintf("unknown error"); break;
