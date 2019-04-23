@@ -276,3 +276,37 @@ int32_t sched_rma(void)
 		return 0;
 	}
 }
+
+/*
+	verificar se existem tarefas aperiódicas na fila, usando o hf_queue_count()
+	a - caso não tenham, hf_yield()
+	b - caso tenham, pegar o primeiro da fila com hf_queue_get()
+		I - caso ainda tenham tarefas pra serem executadas:
+			1 - decrementar a contagem de tarefas
+			2 - escalona a tarefa aperiódica, salvando o contexto de execução da tarefa atual e restaurando o contexto da aperiódica
+		II - caso não tenham tarefas pra serem executadas:
+			1 - remove da fila e dá um hf_kill() na tarefa aperiódica
+			2 - volta pro item 1 (verificar se existem tarefas aperiódicas)
+*/
+int32_t sched_polling(void){
+	
+	int32_t i = 0;
+	struct tcb_entry *e;
+
+	if (hf_queue_count(krnl_run_queue) == 0)
+		hf_yield();
+	do {
+		e = hf_queue_get(krnl_rt_queue, 0);
+		if (e->aperiodic_jobs > 0) {
+			id = krnl_task->id;
+			--krnl_task->capacity_rem;
+		}
+		else {
+
+		}
+	} while (krnl_task->state == TASK_BLOCKED);
+	krnl_task->bgjobs++;
+
+	return krnl_task->id;
+
+}

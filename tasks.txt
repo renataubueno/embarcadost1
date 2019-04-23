@@ -1,0 +1,35 @@
+Tarefas até a entrega:
+[x] Parte 1
+   [o] adicionar um ponteiro para o array de tarefas aperiódicas
+   [o] inicialização da fila
+   [o] modificação do hf_spawn() e do hf_kill()
+   [x] modificar o scheduler.c para incluir o servidor aperiódico, implementando:
+      [x] um dispatcher para tarefas aperiódicas
+      [x] um escalonador (gerenciamento de uma fila circular de tarefas aperiódicas)
+[x] Parte 2
+   [x] descrever uma aplicação que consiste em uma tarefa:
+      [x] Polling Server
+      [x] aperiódica (inicialmente pode se usar o sched_test2)
+      [x] que dispare eventos aperiódicos entre 50ms e 500ms (usando as funções delay_ms() e random())
+[x] Parte 3
+   [x] Escrever o relatório com as seguintes informações
+      [-] modificações no kernel
+      [x] algoritmo implementado
+      [x] organização para demonstração do servidor aperiódico
+      [x] análise de desempenho do escalonador (usando o jitter e delay)
+
+
+----------------------------------------------------
+
+
+Comportamento do servidor aperiódico:
+
+1 - verificar se existem tarefas aperiódicas na fila, usando o hf_queue_count()
+	a - caso não tenham, hf_yield()
+	b - caso tenham, pegar o primeiro da fila com hf_queue_get()
+		I - caso ainda tenham tarefas pra serem executadas:
+			1 - decrementar a contagem de tarefas
+			2 - escalona a tarefa aperiódica, salvando o contexto de execução da tarefa atual e restaurando o contexto da aperiódica
+		II - caso não tenham tarefas pra serem executadas:
+			1 - remove da fila e dá um hf_kill() na tarefa aperiódica
+			2 - volta pro item 1 (verificar se existem tarefas aperiódicas) 

@@ -55,7 +55,6 @@ static void clear_tcb(void)
 		krnl_task->delay = 0;
 		krnl_task->rtjobs = 0;
 		krnl_task->bgjobs = 0;
-		krnl_task->aperiodic_jobs = 0;
 		krnl_task->deadline_misses = 0;
 		krnl_task->period = 0;
 		krnl_task->capacity = 0;
@@ -66,6 +65,7 @@ static void clear_tcb(void)
 		krnl_task->pstack = NULL;
 		krnl_task->stack_size = 0;
 		krnl_task->other_data = 0;
+		krnl_task->aperiodic_jobs = 0;
 	}
 
 	krnl_tasks = 0;
