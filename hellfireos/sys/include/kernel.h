@@ -52,7 +52,7 @@ struct tcb_entry {
 struct pcb_entry {
 	int32_t (*sched_rt)();				/*!< pointer to the realtime scheduler */
 	int32_t (*sched_be)();				/*!< pointer to the best effort scheduler */
-	int32_t (*scheduler_aperiodic)(); /*!< ponteiro para o escalonador de jobs aperiódicos */
+	int32_t (*scheduler_aperiodic)(); 		/*!< ponteiro para o escalonador de jobs aperiódicos */
 	uint32_t coop_cswitch;				/*!< cooperative context switches */
 	uint32_t preempt_cswitch;			/*!< preeptive context switches */
 	uint32_t interrupts;				/*!< number of non-masked interrupts */

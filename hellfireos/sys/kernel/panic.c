@@ -51,7 +51,8 @@ void panic(int32_t cause)
 	case PANIC_CANT_PLACE_RT:	kprintf("can't place task on real time queue"); break;
 	case PANIC_CANT_SWAP:		kprintf("can't swap tasks on queue"); break;
 	case PANIC_NUTS_SEM:		kprintf("insane semaphore"); break;
-	case PANIC_APER:	kprintf("can't place task on aperiodic queue"); break;
+	case PANIC_NO_TASKS_APER:	kprintf("no tasks on aperiodic queue"); break;
+	case PANIC_CANT_PLACE_APER:	kprintf("cant place task on aperiodic queue"); break;
 	default:			kprintf("unknown error"); break;
 	}
 	printf(" -> system halted.\n");
