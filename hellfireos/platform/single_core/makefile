@@ -1,4 +1,4 @@
-APP = app/sched_test2
+APP = app/tarefas_aperiodicas
 ARCH = mips/hf-risc
 
 SERIAL_BAUD=57600

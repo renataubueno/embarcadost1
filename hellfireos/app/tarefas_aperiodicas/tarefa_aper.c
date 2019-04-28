@@ -5,6 +5,7 @@
 void task_polling_server(void){
 	int32_t jobs, id;
 
+	printf("HI");
 	id = hf_selfid();
 	for(;;){
 		jobs = hf_jobs(id);
@@ -32,7 +33,8 @@ void task_best_effort(void){
 	id = hf_selfid();
 	for(;;){
 		delay_ms(50 + (random() % 450));
-		hf_spawn(task_polling_server, 0, 2, 0, "task c", 2048);
+		int32_t i = hf_spawn(task_polling_server, 0, 20, 0, "tarefa aperiódica", 2048);
+		printf("\n%d", i);
 		//trigga o spawn da tarefa aperiódica depois de um random entre 50 e 500
 		//tirando isso, o restante do funcionamento da tarefa é igual ao de tempo real
 		jobs = hf_jobs(id);

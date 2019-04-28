@@ -33,3 +33,6 @@ Comportamento do servidor aperiódico:
 		II - caso não tenham tarefas pra serem executadas:
 			1 - remove da fila e dá um hf_kill() na tarefa aperiódica
 			2 - volta pro item 1 (verificar se existem tarefas aperiódicas) 
+
+
+../../usr/sim/hf_risc_sim/hf_risc_sim image.bin
