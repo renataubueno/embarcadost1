@@ -304,6 +304,8 @@ int32_t sched_rma(void)
 int32_t sched_polling(void){
 	
 	uint16_t id = 0;
+	int32_t rc;
+
 	while(1){
 		if (hf_queue_count(queue_aperiodic) == 0){		//não tem tarefas na fila de aperiódicos
 			hf_yield();
@@ -317,8 +319,38 @@ int32_t sched_polling(void){
 		} else if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0 && !id) {
 			id = krnl_task->id;
 			--krnl_task->capacity_rem;
+			krnl_task = &krnl_tcb[krnl_current_task];
+			rc = _context_save(krnl_task->task_context);
+			if (rc){
+				return;
+			}
+			if (krnl_task->state == TASK_RUNNING){
+				krnl_task->state = TASK_READY;
+			}
+			if (krnl_task->pstack[0] != STACK_MAGIC){
+				panic(PANIC_STACK_OVERFLOW);
+			}
+			if (krnl_tasks > 0){
+				process_delay_queue();
+				krnl_current_task = krnl_pcb.sched_rt();
+				if (krnl_current_task == 0){
+					krnl_current_task = krnl_pcb.scheduler_aperiodic();
+					if (krnl_current_task == 0){
+						krnl_current_task = krnl_pcb.sched_be();
+					}
+				}
+				krnl_task->state = TASK_RUNNING;
+				krnl_pcb.preempt_cswitch++;
+			#if KERNEL_LOG >= 1
+				dprintf("\n%d %d %d %d %d ", krnl_current_task, krnl_task->period, krnl_task->capacity, krnl_task->deadline, (uint32_t)_read_us());
+			#endif
+				_context_restore(krnl_task->task_context, 1);
+				panic(PANIC_UNKNOWN);
+			}else{
+				panic(PANIC_NO_TASKS_LEFT);
+			}
 			//tenho jobs para executar, logo, devo escalonar a tarefa aperiódica, 
-			//salvando o contexto da atula e restaurando o contexto da aperiódica
+			//salvando o contexto da atual e restaurando o contexto da aperiódica
 		}
 	}
 
